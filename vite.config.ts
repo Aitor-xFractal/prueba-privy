@@ -7,20 +7,32 @@ export default defineConfig({
     react(),
     nodePolyfills({
       globals: {
-        Buffer: true,   // asegura window.Buffer en dev y build
+        Buffer: true,
         global: true,
-        process: true   // útil para otras libs web3
+        process: true
       },
       protocolImports: true
     })
   ],
   define: {
-    // algunas libs siguen buscando "global"
     global: 'globalThis'
   },
   resolve: {
     alias: {
-      buffer: 'buffer'  // para imports explícitos 'buffer'
+      buffer: 'buffer'
+    }
+  },
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          privy: ['@privy-io/react-auth'],
+          solana: ['@solana/web3.js', '@solana/spl-token']
+        }
+      }
     }
   }
 })
